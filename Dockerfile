@@ -1,17 +1,18 @@
 # specify node.js image
 FROM node:22-alpine
 
-# use production node environment by default
-ENV NODE_ENV=production
+# Arguments to pass in at build time (for prod/test separation)
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
 
 # set working directory.
 WORKDIR /kutt
 
-# download dependencies while using Docker's caching
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+# Copy package files and install dependencies (using Docker cache efficiently)
+COPY package*.json ./
+
+# Use --omit=dev only in production
+RUN if [ "$NODE_ENV" = "production" ]; then npm ci --omit=dev; else npm ci; fi
 
 RUN mkdir -p /var/lib/kutt
 
@@ -21,5 +22,5 @@ COPY . .
 # expose the port that the app listens on
 EXPOSE 3000
 
-# intialize database and run the app
-CMD npm run migrate && npm start
+# Default command (overridable via docker-compose)
+CMD ["sh", "-c", "npm run migrate && npm start"]

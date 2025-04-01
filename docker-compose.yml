@@ -2,13 +2,14 @@ services:
   server:
     build:
       context: .
-    volumes:
-       - db_data_sqlite:/var/lib/kutt
-       - custom:/kutt/custom
+      args:
+        NODE_ENV: ${NODE_ENV}
     environment:
-      DB_FILENAME: "/var/lib/kutt/data.sqlite"
+      DEFAULT_DOMAIN: ${DEFAULT_DOMAIN}
+      COOKIE_SECURE: ${COOKIE_SECURE}
     ports:
-      - 3000:3000
-volumes:
-  db_data_sqlite:
-  custom:
+      - "${PORT}:${PORT}"
+    command: sh -c "npm run migrate && npm ${START_COMMAND}"
+    env_file:
+      - .env.${ENV_NAME}
+
