@@ -12,7 +12,7 @@ WORKDIR /kutt
 COPY package*.json ./
 
 # Use --omit=dev only in production
-RUN if [ "$NODE_ENV" = "production" ]; then npm ci --omit=dev; else npm ci; fi
+RUN if [ "$NODE_ENV" = "production" ]; then npm install --omit=dev; else npm install; fi
 
 RUN mkdir -p /var/lib/kutt
 
