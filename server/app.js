@@ -68,6 +68,26 @@ app.use("/", routes.render);
 app.use("/api/v2", routes.api);
 app.use("/api", routes.api);
 
+const { httpRequestCounter, registerMetricsRoute } = require('./metrics');
+
+// ✅ Enregistre la route /metrics sur le même serveur
+registerMetricsRoute(app);
+
+// ✅ Middleware pour incrémenter les compteurs
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    console.log(`[metrics] ${req.method} ${req.path} → ${res.statusCode}`);
+
+    httpRequestCounter.inc({
+      method: req.method,
+      route: req.route?.path || req.path,
+      status: res.statusCode
+    });
+  });
+  next();
+});
+
+
 // finally, redirect the short link to the target
 app.get("/:id", asyncHandler(links.redirect));
 

@@ -1,9 +1,7 @@
 # specify node.js image
 FROM node:22-alpine
 
-# Arguments to pass in at build time (for prod/test separation)
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
+ENV NODE_ENV=production
 
 # set working directory.
 WORKDIR /kutt
