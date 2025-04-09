@@ -1,8 +1,6 @@
 apiVersion: 1
-
 providers:
   - name: 'kutt'
-    orgId: 1
     folder: 'Kutt'
     type: file
     disableDeletion: false

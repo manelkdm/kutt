@@ -9,7 +9,6 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  # Logs Docker des conteneurs
   - job_name: dockerlogs
     static_configs:
       - targets:
@@ -17,5 +16,15 @@ scrape_configs:
         labels:
           job: dockerlogs
           __path__: /var/lib/docker/containers/*/*.log
-          __path_exclude__: /var/lib/docker/containers/*/*-json.log.*
+
+    pipeline_stages:
+      - json:
+          expressions:
+            log: ""
+      - regex:
+          expression: 'level=(?P<level>\w+).*service=\\"(?P<service>\w+)\\"'
+      - labels:
+          level:
+          service:
+
 
