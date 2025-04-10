@@ -3,13 +3,71 @@ services:
     build:
       context: .
       args:
-        NODE_ENV: ${NODE_ENV}
+        NODE_ENV: production
     environment:
+      NODE_ENV: production
       DEFAULT_DOMAIN: ${DEFAULT_DOMAIN}
       COOKIE_SECURE: ${COOKIE_SECURE}
     ports:
-      - "${PORT}:${PORT}"
-    command: sh -c "npm run migrate && npm ${START_COMMAND}"
+      - "${PORT}:${PORT}"       # Exemple : 3001:3001
+      - "9100:9100"             # Pour exposer /metrics Prometheus
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./kutt-sqlite:/kutt/db
+    command: sh -c "npm run migrate && npm start"
     env_file:
-      - .env.${ENV_NAME}
+      - .env
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /etc/localtime:/etc/localtime:ro
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+
+    volumes:
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - grafana-storage:/var/lib/grafana
+      - /etc/localtime:/etc/localtime:ro
+
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./monitoring/loki-config.yaml:/etc/loki/local-config.yml
+      - /etc/localtime:/etc/localtime:ro
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    depends_on:
+      - loki
+    volumes:
+      - /var/log:/var/log
+      - /etc/machine-id:/etc/machine-id
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail-config.yaml:/etc/promtail/config.yaml
+      - /etc/localtime:/etc/localtime:ro
+    command: -config.file=/etc/promtail/config.yaml
+
+volumes:
+  grafana-storage:
 

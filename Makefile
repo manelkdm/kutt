@@ -1,5 +1,5 @@
 ENV_NAME ?= test
-COMPOSE = docker compose --project-name kutt-$(ENV_NAME) --env-file .env.$(ENV_NAME)
+COMPOSE = docker compose --project-name kutt --env-file .env
 
 up:
 	$(COMPOSE) up -d --build
