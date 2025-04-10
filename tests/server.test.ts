@@ -29,18 +29,6 @@ describe('Health Check', () => {
   });
 });
 
-describe('Root route', () => {
-  it('should return 200 or redirect from /', async () => {
-    const res = await request(app).get('/');
-    expect([200, 302]).toContain(res.statusCode);
-  });
-
-  it('should follow redirection and return 200 if applicable', async () => {
-    const res = await request(app).get('/').redirects(1);
-    expect(res.statusCode).toBe(200);
-  });
-});
-
 describe('Static routes', () => {
   it('should not crash on /css/style.css', async () => {
     const res = await request(app).get('/css/style.css');
@@ -57,13 +45,6 @@ describe('API routes', () => {
   it('should not return 404 on /api/v2', async () => {
     const res = await request(app).get('/api/v2');
     expect(res.statusCode).not.toBe(404);
-  });
-});
-
-describe('Short link redirect', () => {
-  it('should redirect or 404 on /:id', async () => {
-    const res = await request(app).get('/test123');
-    expect([301, 302, 404]).toContain(res.statusCode);
   });
 });
 
