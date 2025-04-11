@@ -8,7 +8,6 @@ app.use(express.json());
 app.post("/", (req, res) => {
     console.log("📩 Webhook POST reçu !");
     const payload = req.body;
-    console.log("📝 Contenu :", payload);
 
     // Vérifier si c’est bien un push
     if (!payload.ref) {

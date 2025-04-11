@@ -248,11 +248,10 @@ We use a lightweight trunk-based development model with Pull Requests.
 
 #### Linting
 
-The codebase uses **ESLint** and **Prettier**:
+The codebase uses **ESLint**:
 
 ```bash
 npm run lint      # Runs ESLint
-npm run format    # Formats code with Prettier
 ```
 
 Both are checked in CI.
