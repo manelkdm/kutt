@@ -31,7 +31,6 @@
 - Created with self-host in mind:
   - Zero configuration needed
   - Easy setup with no build step
-  - Supporting various databases (SQLite, Postgres, MySQL)
   - Ability to disable registration and anonymous links
 - Custom domain support
 - Set custom URLs, password, description, and expiration time for links
@@ -65,18 +64,6 @@ Make sure Docker is installed, then you can start the app from the root director
 ```sh
 docker compose up
 ```
-
-Various docker-compose configurations are available. Use `docker compose -f <file_name> up` to start the one you want:
-
-- [`docker-compose.yml`](./docker-compose.yml): Default Kutt setup. Uses SQLite for the database.
-- [`docker-compose.sqlite-redis.yml`](./docker-compose.sqlite-redis.yml): Starts Kutt with SQLite and Redis.
-  - Required envrionment variable: `REDIS_ENABLED`
-- [`docker-compose.postgres.yml`](./docker-compose.postgres.yml): Starts Kutt with Postgres and Redis.
-  - Required envrionment variables: `REDIS_ENABLED`, `DB_PASSWORD`, `DB_NAME`, `DB_USER`
-- [`docker-compose.mariadb.yml`](./docker-compose.mariadb.yml): Starts Kutt with MariaDB and Redis.
-  - Required envrionment variables: `REDIS_ENABLED`, `DB_PASSWORD`, `DB_NAME`, `DB_USER`, `DB_PORT`
-
-Official Kutt Docker image is available on [Docker Hub](https://hub.docker.com/r/kutt/kutt).
 
 ## API
 
@@ -240,6 +227,74 @@ Download Kutt's extension for web browsers via below links.
 ## Contributing
 
 Pull requests are welcome. Open a discussion for feedback, requesting features, or discussing ideas.
+
+We use a lightweight trunk-based development model with Pull Requests.
+
+#### Branching Strategy
+
+- `main`: protected branch, always deployable
+- Feature branches: `feature/<name>`
+- Fix branches: `fix/<issue>`
+
+#### Pull Request Rules
+
+- Lint and tests must pass before merging
+- PRs must be reviewed and approved
+- Squash commits preferred
+
+---
+
+### Code Quality
+
+#### Linting
+
+The codebase uses **ESLint** and **Prettier**:
+
+```bash
+npm run lint      # Runs ESLint
+npm run format    # Formats code with Prettier
+```
+
+Both are checked in CI.
+
+#### Testing
+
+Basic tests are written using Node's `assert` module and executed via custom scripts or `npm test`.
+
+Sample test command:
+
+```bash
+node test/server.test.js
+```
+
+> You can use any framework (Jest, Mocha, etc.), but this repo keeps it minimal by default.
+
+---
+
+### GitHub Actions (CI)
+
+GitHub Actions is used for Continuous Integration:
+
+File: `.github/workflows/ci.yml`
+
+#### Steps
+
+- Checkout code
+- Install dependencies
+- Run ESLint
+- Run tests
+
+---
+
+### Branch Protection
+
+The `main` branch is protected in GitHub settings:
+
+- Requires PR
+- Requires status checks to pass
+- Requires code review
+
+Thanks for contributing and helping improve the project!
 
 Special thanks to [Thomas](https://github.com/trgwii) and [Muthu](https://github.com/MKRhere). Logo design by [Muthu](https://github.com/MKRhere).
 
