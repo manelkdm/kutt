@@ -16,8 +16,7 @@ export default defineConfig([
       "no-unused-vars": "warn",
       "no-undef": "warn",
       "no-console": "off",
-      "no-case-declarations": "off",
-      "semi": ["warn", "always"]
+      "no-case-declarations": "off"
     }
   },
   { ignores: ["node_modules/*", "static/*", "custom/*", "docs/*", "jest.config.js", "knexfile.js"], },
